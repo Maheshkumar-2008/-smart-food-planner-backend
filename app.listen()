@@ -1,0 +1,17 @@
+// =====================================
+// GET ALL MENUS
+// =====================================
+
+app.get("/api/menus", (req, res) => {
+
+    res.json({
+
+        success: true,
+
+        count: menus.length,
+
+        menus: menus
+
+    });
+
+});

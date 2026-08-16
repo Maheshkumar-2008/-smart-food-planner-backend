@@ -1,0 +1,39 @@
+{
+  "people": 250,
+  "meal": "Lunch",
+  "menu": "Rice + Dal + Vegetable Curry",
+  "buffer": 5,
+  "ingredients": [
+    {
+      "name": "Rice",
+      "quantityPerPerson": 100,
+      "unit": "grams"
+    },
+    {
+      "name": "Dal",
+      "quantityPerPerson": 30,
+      "unit": "grams"
+    },
+    {
+      "name": "Vegetables",
+      "quantityPerPerson": 60,
+      "unit": "grams"
+    },
+    {
+      "name": "Oil",
+      "quantityPerPerson": 10,
+      "unit": "ml"
+    },
+    {
+      "name": "Curd",
+      "quantityPerPerson": 50,
+      "unit": "grams"
+    }
+  ],
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "mysql2": "^3.23.3"
+  }
+}

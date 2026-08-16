@@ -1,0 +1,77 @@
+-- =========================================
+-- CREATE DATABASE
+-- =========================================
+
+CREATE DATABASE IF NOT EXISTS smart_food_planner;
+
+USE smart_food_planner;
+
+
+-- =========================================
+-- MENUS TABLE
+-- =========================================
+
+CREATE TABLE IF NOT EXISTS menus (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL,
+    meal VARCHAR(50) NOT NULL
+);
+
+
+-- =========================================
+-- INGREDIENTS TABLE
+-- =========================================
+
+CREATE TABLE IF NOT EXISTS ingredients (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    menu_id INT NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    quantity_per_person DECIMAL(10,2) NOT NULL,
+    unit VARCHAR(20) NOT NULL,
+
+    CONSTRAINT fk_ingredients_menu
+        FOREIGN KEY (menu_id)
+        REFERENCES menus(id)
+        ON DELETE CASCADE
+);
+
+
+-- =========================================
+-- FOOD PLANS TABLE
+-- =========================================
+
+CREATE TABLE IF NOT EXISTS food_plans (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    plan_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    people INT NOT NULL,
+    meal VARCHAR(50) NOT NULL,
+    menu VARCHAR(100) NOT NULL,
+    safety_buffer DECIMAL(5,2) DEFAULT 0,
+    effective_people INT NOT NULL
+);
+
+
+-- =========================================
+-- FOOD PLAN INGREDIENTS TABLE
+-- =========================================
+
+CREATE TABLE IF NOT EXISTS food_plan_ingredients (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    food_plan_id INT NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    quantity_per_person DECIMAL(10,2) NOT NULL,
+    unit VARCHAR(20) NOT NULL,
+    total_quantity DECIMAL(10,2) NOT NULL,
+
+    CONSTRAINT fk_food_plan_ingredients_plan
+        FOREIGN KEY (food_plan_id)
+        REFERENCES food_plans(id)
+        ON DELETE CASCADE
+);
+
+
+-- =========================================
+-- CHECK TABLES
+-- =========================================
+
+SHOW TABLES;
