@@ -2300,6 +2300,10 @@ function dashboardError(res, error) {
             error?.sqlMessage ?? null
     });
 }
+// =====================================================
+// DATABASE TEST
+// =====================================================
+
 app.get("/api/db-test", (req, res) => {
 
     db.query(
@@ -2315,7 +2319,8 @@ app.get("/api/db-test", (req, res) => {
 
                 return res.status(500).json({
                     success: false,
-                    message: "Database connection test failed",
+                    message:
+                        "Database connection test failed",
 
                     error:
                         error?.message ||
@@ -2338,32 +2343,15 @@ app.get("/api/db-test", (req, res) => {
 
             res.json({
                 success: true,
-                message: "Database connection is working",
+                message:
+                    "Database connection is working",
                 rows: rows
             });
+
         }
     );
+
 });
-// =====================================================
-// 404 HANDLER
-// =====================================================
-
-app.use(
-    (req, res) => {
-
-        res.status(404).json({
-
-            success:
-                false,
-
-            message:
-                `Cannot ${req.method} ${req.originalUrl}`
-
-        });
-
-    }
-);
-
 
 // =====================================================
 // START SERVER
