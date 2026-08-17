@@ -2271,31 +2271,26 @@ app.get(
 // DASHBOARD ERROR
 // =====================================================
 
-function dashboardError(
-    res,
-    error
-) {
+// =====================================================
+// DASHBOARD ERROR
+// =====================================================
+
+function dashboardError(res, error) {
 
     console.error(
         "Dashboard error:",
-        error.message
+        error
     );
 
     return res.status(500).json({
-
-        success:
-            false,
-
-        message:
-            "Failed to load dashboard",
-
-        error:
-            error.message
-
+        success: false,
+        message: "Failed to load dashboard",
+        error: error?.message || "Unknown database error",
+        code: error?.code || null,
+        errno: error?.errno || null,
+        sqlState: error?.sqlState || null
     });
 }
-
-
 // =====================================================
 // 404 HANDLER
 // =====================================================
