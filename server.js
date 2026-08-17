@@ -29,12 +29,10 @@ app.get("/", (req, res) => {
 // =====================================================
 
 app.get("/api/message", (req, res) => {
-
     res.json({
         success: true,
         message: "Backend connected successfully!"
     });
-
 });
 
 
@@ -55,34 +53,29 @@ app.get("/api/menus", (req, res) => {
         ORDER BY id DESC
     `;
 
-    db.query(
-        query,
-        (error, menus) => {
+    db.query(query, (error, menus) => {
 
-            if (error) {
+        if (error) {
 
-                console.error(
-                    "Menus error:",
-                    error.message
-                );
+            console.error(
+                "Menus error:",
+                error.message
+            );
 
-                return res.status(500).json({
-                    success: false,
-                    message: "Failed to get menus",
-                    error: error.message
-                });
-
-            }
-
-            res.json({
-                success: true,
-                count: menus.length,
-                menus: menus
+            return res.status(500).json({
+                success: false,
+                message: "Failed to get menus",
+                error: error.message
             });
-
         }
-    );
 
+        res.json({
+            success: true,
+            count: menus.length,
+            menus: menus
+        });
+
+    });
 });
 
 
@@ -101,7 +94,6 @@ app.post("/api/menus", (req, res) => {
             success: false,
             message: "name and meal are required"
         });
-
     }
 
     const query = `
@@ -115,25 +107,16 @@ app.post("/api/menus", (req, res) => {
 
     db.query(
         query,
-        [
-            name,
-            meal
-        ],
+        [name, meal],
         (error, result) => {
 
             if (error) {
-
-                console.error(
-                    "Create menu error:",
-                    error.message
-                );
 
                 return res.status(500).json({
                     success: false,
                     message: "Failed to create menu",
                     error: error.message
                 });
-
             }
 
             res.status(201).json({
@@ -148,7 +131,6 @@ app.post("/api/menus", (req, res) => {
 
         }
     );
-
 });
 
 
@@ -158,13 +140,12 @@ app.get("/api/menus/:id", (req, res) => {
 
     const id = Number(req.params.id);
 
-    if (!Number.isInteger(id)) {
+    if (!Number.isInteger(id) || id <= 0) {
 
         return res.status(400).json({
             success: false,
             message: "Invalid menu ID"
         });
-
     }
 
     const menuQuery = `
@@ -188,7 +169,6 @@ app.get("/api/menus/:id", (req, res) => {
                     message: "Failed to get menu",
                     error: menuError.message
                 });
-
             }
 
             if (menuResults.length === 0) {
@@ -197,7 +177,6 @@ app.get("/api/menus/:id", (req, res) => {
                     success: false,
                     message: "Menu not found"
                 });
-
             }
 
             const ingredientQuery = `
@@ -221,10 +200,11 @@ app.get("/api/menus/:id", (req, res) => {
 
                         return res.status(500).json({
                             success: false,
-                            message: "Failed to get ingredients",
-                            error: ingredientError.message
+                            message:
+                                "Failed to get ingredients",
+                            error:
+                                ingredientError.message
                         });
-
                     }
 
                     res.json({
@@ -239,17 +219,12 @@ app.get("/api/menus/:id", (req, res) => {
                                 ingredients.map(
                                     ingredient => ({
                                         id: ingredient.id,
-
-                                        name:
-                                            ingredient.name,
-
+                                        name: ingredient.name,
                                         quantityPerPerson:
                                             Number(
                                                 ingredient.quantity_per_person
                                             ),
-
-                                        unit:
-                                            ingredient.unit
+                                        unit: ingredient.unit
                                     })
                                 )
                         }
@@ -260,7 +235,6 @@ app.get("/api/menus/:id", (req, res) => {
 
         }
     );
-
 });
 
 
@@ -275,13 +249,12 @@ app.put("/api/menus/:id", (req, res) => {
         meal
     } = req.body;
 
-    if (!Number.isInteger(id)) {
+    if (!Number.isInteger(id) || id <= 0) {
 
         return res.status(400).json({
             success: false,
             message: "Invalid menu ID"
         });
-
     }
 
     if (!name || !meal) {
@@ -290,7 +263,6 @@ app.put("/api/menus/:id", (req, res) => {
             success: false,
             message: "name and meal are required"
         });
-
     }
 
     const query = `
@@ -303,11 +275,7 @@ app.put("/api/menus/:id", (req, res) => {
 
     db.query(
         query,
-        [
-            name,
-            meal,
-            id
-        ],
+        [name, meal, id],
         (error, result) => {
 
             if (error) {
@@ -317,7 +285,6 @@ app.put("/api/menus/:id", (req, res) => {
                     message: "Failed to update menu",
                     error: error.message
                 });
-
             }
 
             if (result.affectedRows === 0) {
@@ -326,7 +293,6 @@ app.put("/api/menus/:id", (req, res) => {
                     success: false,
                     message: "Menu not found"
                 });
-
             }
 
             res.json({
@@ -336,7 +302,6 @@ app.put("/api/menus/:id", (req, res) => {
 
         }
     );
-
 });
 
 
@@ -346,13 +311,12 @@ app.delete("/api/menus/:id", (req, res) => {
 
     const id = Number(req.params.id);
 
-    if (!Number.isInteger(id)) {
+    if (!Number.isInteger(id) || id <= 0) {
 
         return res.status(400).json({
             success: false,
             message: "Invalid menu ID"
         });
-
     }
 
     db.query(
@@ -367,10 +331,10 @@ app.delete("/api/menus/:id", (req, res) => {
 
                 return res.status(500).json({
                     success: false,
-                    message: "Failed to delete menu",
+                    message:
+                        "Failed to delete menu",
                     error: error.message
                 });
-
             }
 
             if (result.affectedRows === 0) {
@@ -379,17 +343,16 @@ app.delete("/api/menus/:id", (req, res) => {
                     success: false,
                     message: "Menu not found"
                 });
-
             }
 
             res.json({
                 success: true,
-                message: "Menu deleted successfully"
+                message:
+                    "Menu deleted successfully"
             });
 
         }
     );
-
 });
 
 
@@ -427,10 +390,10 @@ app.get("/api/inventory", (req, res) => {
 
                 return res.status(500).json({
                     success: false,
-                    message: "Failed to get inventory",
+                    message:
+                        "Failed to get inventory",
                     error: error.message
                 });
-
             }
 
             res.json({
@@ -441,7 +404,6 @@ app.get("/api/inventory", (req, res) => {
 
         }
     );
-
 });
 
 
@@ -468,7 +430,6 @@ app.post("/api/inventory", (req, res) => {
             message:
                 "itemName, quantity, unit and minimumStock are required"
         });
-
     }
 
     const query = `
@@ -500,7 +461,6 @@ app.post("/api/inventory", (req, res) => {
                         "Failed to create inventory item",
                     error: error.message
                 });
-
             }
 
             res.status(201).json({
@@ -513,7 +473,6 @@ app.post("/api/inventory", (req, res) => {
 
         }
     );
-
 });
 
 
@@ -530,13 +489,13 @@ app.put("/api/inventory/:id", (req, res) => {
         minimumStock
     } = req.body;
 
-    if (!Number.isInteger(id)) {
+    if (!Number.isInteger(id) || id <= 0) {
 
         return res.status(400).json({
             success: false,
-            message: "Invalid inventory ID"
+            message:
+                "Invalid inventory ID"
         });
-
     }
 
     const query = `
@@ -568,7 +527,6 @@ app.put("/api/inventory/:id", (req, res) => {
                         "Failed to update inventory item",
                     error: error.message
                 });
-
             }
 
             if (result.affectedRows === 0) {
@@ -578,7 +536,6 @@ app.put("/api/inventory/:id", (req, res) => {
                     message:
                         "Inventory item not found"
                 });
-
             }
 
             res.json({
@@ -589,7 +546,6 @@ app.put("/api/inventory/:id", (req, res) => {
 
         }
     );
-
 });
 
 
@@ -599,13 +555,13 @@ app.delete("/api/inventory/:id", (req, res) => {
 
     const id = Number(req.params.id);
 
-    if (!Number.isInteger(id)) {
+    if (!Number.isInteger(id) || id <= 0) {
 
         return res.status(400).json({
             success: false,
-            message: "Invalid inventory ID"
+            message:
+                "Invalid inventory ID"
         });
-
     }
 
     db.query(
@@ -624,7 +580,6 @@ app.delete("/api/inventory/:id", (req, res) => {
                         "Failed to delete inventory item",
                     error: error.message
                 });
-
             }
 
             if (result.affectedRows === 0) {
@@ -634,7 +589,6 @@ app.delete("/api/inventory/:id", (req, res) => {
                     message:
                         "Inventory item not found"
                 });
-
             }
 
             res.json({
@@ -645,7 +599,6 @@ app.delete("/api/inventory/:id", (req, res) => {
 
         }
     );
-
 });
 
 
@@ -687,7 +640,6 @@ app.get("/api/meal-schedules", (req, res) => {
                         "Failed to get meal schedules",
                     error: error.message
                 });
-
             }
 
             res.json({
@@ -698,7 +650,6 @@ app.get("/api/meal-schedules", (req, res) => {
 
         }
     );
-
 });
 
 
@@ -728,7 +679,6 @@ app.post("/api/meal-schedules", (req, res) => {
             message:
                 "scheduleDate, mealType, mealTime, menuId and people are required"
         });
-
     }
 
     const query = `
@@ -764,7 +714,6 @@ app.post("/api/meal-schedules", (req, res) => {
                         "Failed to create meal schedule",
                     error: error.message
                 });
-
             }
 
             res.status(201).json({
@@ -777,7 +726,6 @@ app.post("/api/meal-schedules", (req, res) => {
 
         }
     );
-
 });
 
 
@@ -796,13 +744,13 @@ app.put("/api/meal-schedules/:id", (req, res) => {
         status
     } = req.body;
 
-    if (!Number.isInteger(id)) {
+    if (!Number.isInteger(id) || id <= 0) {
 
         return res.status(400).json({
             success: false,
-            message: "Invalid schedule ID"
+            message:
+                "Invalid schedule ID"
         });
-
     }
 
     const query = `
@@ -838,7 +786,6 @@ app.put("/api/meal-schedules/:id", (req, res) => {
                         "Failed to update meal schedule",
                     error: error.message
                 });
-
             }
 
             if (result.affectedRows === 0) {
@@ -848,7 +795,6 @@ app.put("/api/meal-schedules/:id", (req, res) => {
                     message:
                         "Meal schedule not found"
                 });
-
             }
 
             res.json({
@@ -859,7 +805,6 @@ app.put("/api/meal-schedules/:id", (req, res) => {
 
         }
     );
-
 });
 
 
@@ -869,13 +814,13 @@ app.delete("/api/meal-schedules/:id", (req, res) => {
 
     const id = Number(req.params.id);
 
-    if (!Number.isInteger(id)) {
+    if (!Number.isInteger(id) || id <= 0) {
 
         return res.status(400).json({
             success: false,
-            message: "Invalid schedule ID"
+            message:
+                "Invalid schedule ID"
         });
-
     }
 
     db.query(
@@ -894,7 +839,6 @@ app.delete("/api/meal-schedules/:id", (req, res) => {
                         "Failed to delete meal schedule",
                     error: error.message
                 });
-
             }
 
             if (result.affectedRows === 0) {
@@ -904,7 +848,6 @@ app.delete("/api/meal-schedules/:id", (req, res) => {
                     message:
                         "Meal schedule not found"
                 });
-
             }
 
             res.json({
@@ -915,7 +858,6 @@ app.delete("/api/meal-schedules/:id", (req, res) => {
 
         }
     );
-
 });
 
 
@@ -943,9 +885,9 @@ app.patch(
 
             return res.status(400).json({
                 success: false,
-                message: "Invalid status"
+                message:
+                    "Invalid status"
             });
-
         }
 
         db.query(
@@ -966,9 +908,9 @@ app.patch(
                         success: false,
                         message:
                             "Failed to update status",
-                        error: error.message
+                        error:
+                            error.message
                     });
-
                 }
 
                 if (result.affectedRows === 0) {
@@ -978,7 +920,6 @@ app.patch(
                         message:
                             "Meal schedule not found"
                     });
-
                 }
 
                 res.json({
@@ -1011,9 +952,9 @@ app.post("/api/calculator", (req, res) => {
 
         return res.status(400).json({
             success: false,
-            message: "menu_id is required"
+            message:
+                "menu_id is required"
         });
-
     }
 
     if (
@@ -1026,7 +967,6 @@ app.post("/api/calculator", (req, res) => {
             message:
                 "people must be greater than 0"
         });
-
     }
 
     if (
@@ -1039,7 +979,6 @@ app.post("/api/calculator", (req, res) => {
             message:
                 "safety_buffer must be between 0 and 100"
         });
-
     }
 
     const numberOfPeople =
@@ -1063,9 +1002,7 @@ app.post("/api/calculator", (req, res) => {
         FROM menus
         WHERE id = ?
         `,
-        [
-            Number(menu_id)
-        ],
+        [Number(menu_id)],
         (
             menuError,
             menuResults
@@ -1080,7 +1017,6 @@ app.post("/api/calculator", (req, res) => {
                     error:
                         menuError.message
                 });
-
             }
 
             if (menuResults.length === 0) {
@@ -1090,7 +1026,6 @@ app.post("/api/calculator", (req, res) => {
                     message:
                         "Menu not found"
                 });
-
             }
 
             const menu =
@@ -1108,9 +1043,7 @@ app.post("/api/calculator", (req, res) => {
                 WHERE menu_id = ?
                 ORDER BY id
                 `,
-                [
-                    Number(menu_id)
-                ],
+                [Number(menu_id)],
                 (
                     ingredientError,
                     ingredients
@@ -1125,7 +1058,6 @@ app.post("/api/calculator", (req, res) => {
                             error:
                                 ingredientError.message
                         });
-
                     }
 
                     if (
@@ -1137,7 +1069,6 @@ app.post("/api/calculator", (req, res) => {
                             message:
                                 "No ingredients found for this menu"
                         });
-
                     }
 
                     const calculatedIngredients =
@@ -1154,7 +1085,6 @@ app.post("/api/calculator", (req, res) => {
                                     effectivePeople;
 
                                 return {
-
                                     id:
                                         ingredient.id,
 
@@ -1171,7 +1101,6 @@ app.post("/api/calculator", (req, res) => {
                                         Number(
                                             totalQuantity.toFixed(3)
                                         )
-
                                 };
 
                             }
@@ -1179,7 +1108,8 @@ app.post("/api/calculator", (req, res) => {
 
                     res.json({
 
-                        success: true,
+                        success:
+                            true,
 
                         message:
                             "Food calculated successfully",
@@ -1198,7 +1128,6 @@ app.post("/api/calculator", (req, res) => {
 
                         ingredients:
                             calculatedIngredients
-
                     });
 
                 }
@@ -1206,7 +1135,6 @@ app.post("/api/calculator", (req, res) => {
 
         }
     );
-
 });
 
 
@@ -1242,7 +1170,6 @@ app.post("/api/food-plans", (req, res) => {
             message:
                 "plan_date, people, meal, menu, menu_id and ingredients are required"
         });
-
     }
 
     const numberOfPeople =
@@ -1258,7 +1185,6 @@ app.post("/api/food-plans", (req, res) => {
             message:
                 "people must be greater than 0"
         });
-
     }
 
     if (
@@ -1271,7 +1197,6 @@ app.post("/api/food-plans", (req, res) => {
             message:
                 "safety_buffer must be between 0 and 100"
         });
-
     }
 
     const effectivePeople =
@@ -1280,168 +1205,198 @@ app.post("/api/food-plans", (req, res) => {
             (1 + buffer / 100)
         );
 
-    db.beginTransaction(
-        transactionError => {
+    // IMPORTANT:
+    // Get a dedicated connection from the pool
+    // for the transaction.
 
-            if (transactionError) {
+    db.getConnection(
+        (connectionError, connection) => {
+
+            if (connectionError) {
 
                 return res.status(500).json({
                     success: false,
                     message:
-                        "Failed to start transaction",
+                        "Failed to get database connection",
                     error:
-                        transactionError.message
+                        connectionError.message
                 });
-
             }
 
-            const foodPlanQuery = `
-                INSERT INTO food_plans
-                (
-                    plan_date,
-                    people,
-                    meal,
-                    menu,
-                    safety_buffer,
-                    effective_people
-                )
-                VALUES (?, ?, ?, ?, ?, ?)
-            `;
+            connection.beginTransaction(
+                transactionError => {
 
-            db.query(
-                foodPlanQuery,
-                [
-                    plan_date,
-                    numberOfPeople,
-                    meal,
-                    menu,
-                    buffer,
-                    effectivePeople
-                ],
-                (
-                    foodPlanError,
-                    foodPlanResult
-                ) => {
+                    if (transactionError) {
 
-                    if (foodPlanError) {
+                        connection.release();
 
-                        return db.rollback(
-                            () => {
-
-                                res.status(500).json({
-                                    success: false,
-                                    message:
-                                        "Failed to save food plan",
-                                    error:
-                                        foodPlanError.message
-                                });
-
-                            }
-                        );
-
+                        return res.status(500).json({
+                            success: false,
+                            message:
+                                "Failed to start transaction",
+                            error:
+                                transactionError.message
+                        });
                     }
 
-                    const foodPlanId =
-                        foodPlanResult.insertId;
-
-                    const ingredientQuery = `
-                        INSERT INTO food_plan_ingredients
+                    const foodPlanQuery = `
+                        INSERT INTO food_plans
                         (
-                            food_plan_id,
-                            name,
-                            total_quantity,
-                            unit
+                            plan_date,
+                            people,
+                            meal,
+                            menu,
+                            safety_buffer,
+                            effective_people
                         )
-                        VALUES ?
+                        VALUES (?, ?, ?, ?, ?, ?)
                     `;
 
-                    const ingredientValues =
-                        ingredients.map(
-                            ingredient => [
-
-                                foodPlanId,
-
-                                ingredient.name,
-
-                                Number(
-                                    ingredient.totalQuantity
-                                ),
-
-                                ingredient.unit
-
-                            ]
-                        );
-
-                    db.query(
-                        ingredientQuery,
+                    connection.query(
+                        foodPlanQuery,
                         [
-                            ingredientValues
+                            plan_date,
+                            numberOfPeople,
+                            meal,
+                            menu,
+                            buffer,
+                            effectivePeople
                         ],
-                        ingredientError => {
+                        (
+                            foodPlanError,
+                            foodPlanResult
+                        ) => {
 
-                            if (ingredientError) {
+                            if (foodPlanError) {
 
-                                return db.rollback(
+                                return connection.rollback(
                                     () => {
+
+                                        connection.release();
 
                                         res.status(500).json({
                                             success: false,
                                             message:
-                                                "Failed to save food plan ingredients",
+                                                "Failed to save food plan",
                                             error:
-                                                ingredientError.message
+                                                foodPlanError.message
                                         });
 
                                     }
                                 );
-
                             }
 
-                            db.commit(
-                                commitError => {
+                            const foodPlanId =
+                                foodPlanResult.insertId;
 
-                                    if (commitError) {
+                            const ingredientQuery = `
+                                INSERT INTO food_plan_ingredients
+                                (
+                                    food_plan_id,
+                                    name,
+                                    total_quantity,
+                                    unit
+                                )
+                                VALUES ?
+                            `;
 
-                                        return db.rollback(
+                            const ingredientValues =
+                                ingredients.map(
+                                    ingredient => [
+
+                                        foodPlanId,
+
+                                        ingredient.name,
+
+                                        Number(
+                                            ingredient.totalQuantity
+                                        ),
+
+                                        ingredient.unit
+
+                                    ]
+                                );
+
+                            connection.query(
+                                ingredientQuery,
+                                [ingredientValues],
+                                ingredientError => {
+
+                                    if (
+                                        ingredientError
+                                    ) {
+
+                                        return connection.rollback(
                                             () => {
+
+                                                connection.release();
 
                                                 res.status(500).json({
                                                     success: false,
                                                     message:
-                                                        "Failed to save food plan",
+                                                        "Failed to save food plan ingredients",
                                                     error:
-                                                        commitError.message
+                                                        ingredientError.message
                                                 });
 
                                             }
                                         );
-
                                     }
 
-                                    res.status(201).json({
+                                    connection.commit(
+                                        commitError => {
 
-                                        success:
-                                            true,
+                                            if (
+                                                commitError
+                                            ) {
 
-                                        message:
-                                            "Food plan saved successfully",
+                                                return connection.rollback(
+                                                    () => {
 
-                                        foodPlanId:
-                                            foodPlanId,
+                                                        connection.release();
 
-                                        people:
-                                            numberOfPeople,
+                                                        res.status(500).json({
+                                                            success:
+                                                                false,
+                                                            message:
+                                                                "Failed to save food plan",
+                                                            error:
+                                                                commitError.message
+                                                        });
 
-                                        safety_buffer:
-                                            buffer,
+                                                    }
+                                                );
+                                            }
 
-                                        effective_people:
-                                            effectivePeople,
+                                            connection.release();
 
-                                        ingredients:
-                                            ingredients
+                                            res.status(201).json({
 
-                                    });
+                                                success:
+                                                    true,
+
+                                                message:
+                                                    "Food plan saved successfully",
+
+                                                foodPlanId:
+                                                    foodPlanId,
+
+                                                people:
+                                                    numberOfPeople,
+
+                                                safety_buffer:
+                                                    buffer,
+
+                                                effective_people:
+                                                    effectivePeople,
+
+                                                ingredients:
+                                                    ingredients
+
+                                            });
+
+                                        }
+                                    );
 
                                 }
                             );
@@ -1490,7 +1445,6 @@ app.get("/api/food-plans", (req, res) => {
                     error:
                         error.message
                 });
-
             }
 
             res.json({
@@ -1503,7 +1457,6 @@ app.get("/api/food-plans", (req, res) => {
 
         }
     );
-
 });
 
 
@@ -1526,7 +1479,6 @@ app.get("/api/food-plans/:id", (req, res) => {
             message:
                 "Invalid food plan ID"
         });
-
     }
 
     const planQuery = `
@@ -1544,9 +1496,7 @@ app.get("/api/food-plans/:id", (req, res) => {
 
     db.query(
         planQuery,
-        [
-            foodPlanId
-        ],
+        [foodPlanId],
         (
             planError,
             plans
@@ -1561,7 +1511,6 @@ app.get("/api/food-plans/:id", (req, res) => {
                     error:
                         planError.message
                 });
-
             }
 
             if (plans.length === 0) {
@@ -1571,7 +1520,6 @@ app.get("/api/food-plans/:id", (req, res) => {
                     message:
                         "Food plan not found"
                 });
-
             }
 
             const ingredientQuery = `
@@ -1588,9 +1536,7 @@ app.get("/api/food-plans/:id", (req, res) => {
 
             db.query(
                 ingredientQuery,
-                [
-                    foodPlanId
-                ],
+                [foodPlanId],
                 (
                     ingredientError,
                     ingredients
@@ -1605,7 +1551,6 @@ app.get("/api/food-plans/:id", (req, res) => {
                             error:
                                 ingredientError.message
                         });
-
                     }
 
                     res.json({
@@ -1647,7 +1592,6 @@ app.get("/api/food-plans/:id", (req, res) => {
 
         }
     );
-
 });
 
 
@@ -1672,7 +1616,6 @@ app.post(
                 message:
                     "Invalid food plan ID"
             });
-
         }
 
         const ingredientQuery = `
@@ -1686,9 +1629,7 @@ app.post(
 
         db.query(
             ingredientQuery,
-            [
-                foodPlanId
-            ],
+            [foodPlanId],
             (
                 ingredientError,
                 ingredients
@@ -1703,7 +1644,6 @@ app.post(
                         error:
                             ingredientError.message
                     });
-
                 }
 
                 if (ingredients.length === 0) {
@@ -1713,303 +1653,335 @@ app.post(
                         message:
                             "No ingredients found"
                     });
-
                 }
 
-                db.beginTransaction(
-                    transactionError => {
+                // IMPORTANT:
+                // Use one dedicated connection for the
+                // entire inventory transaction.
 
-                        if (transactionError) {
+                db.getConnection(
+                    (
+                        connectionError,
+                        connection
+                    ) => {
+
+                        if (connectionError) {
 
                             return res.status(500).json({
                                 success: false,
                                 message:
-                                    "Failed to start transaction",
+                                    "Failed to get database connection",
                                 error:
-                                    transactionError.message
+                                    connectionError.message
                             });
-
                         }
 
-                        const updatedItems = [];
-
-                        const processIngredient =
-                            index => {
+                        connection.beginTransaction(
+                            transactionError => {
 
                                 if (
-                                    index >=
-                                    ingredients.length
+                                    transactionError
                                 ) {
 
-                                    return db.commit(
-                                        commitError => {
+                                    connection.release();
 
-                                            if (
-                                                commitError
-                                            ) {
-
-                                                return db.rollback(
-                                                    () => {
-
-                                                        res.status(500).json({
-                                                            success:
-                                                                false,
-
-                                                            message:
-                                                                "Failed to commit inventory changes",
-
-                                                            error:
-                                                                commitError.message
-                                                        });
-
-                                                    }
-                                                );
-
-                                            }
-
-                                            res.json({
-
-                                                success:
-                                                    true,
-
-                                                message:
-                                                    "Inventory deducted successfully",
-
-                                                updatedItems:
-                                                    updatedItems
-
-                                            });
-
-                                        }
-                                    );
-
+                                    return res.status(500).json({
+                                        success: false,
+                                        message:
+                                            "Failed to start transaction",
+                                        error:
+                                            transactionError.message
+                                    });
                                 }
 
-                                const ingredient =
-                                    ingredients[index];
+                                const updatedItems =
+                                    [];
 
-                                const inventoryQuery = `
-                                    SELECT
-                                        id,
-                                        item_name,
-                                        quantity,
-                                        unit
-                                    FROM inventory
-                                    WHERE LOWER(
-                                        TRIM(item_name)
-                                    )
-                                    =
-                                    LOWER(
-                                        TRIM(?)
-                                    )
-                                    LIMIT 1
-                                    FOR UPDATE
-                                `;
-
-                                db.query(
-                                    inventoryQuery,
-                                    [
-                                        ingredient.name
-                                    ],
-                                    (
-                                        inventoryError,
-                                        rows
-                                    ) => {
+                                const processIngredient =
+                                    index => {
 
                                         if (
-                                            inventoryError
+                                            index >=
+                                            ingredients.length
                                         ) {
 
-                                            return db.rollback(
-                                                () => {
+                                            return connection.commit(
+                                                commitError => {
 
-                                                    res.status(500).json({
+                                                    if (
+                                                        commitError
+                                                    ) {
+
+                                                        return connection.rollback(
+                                                            () => {
+
+                                                                connection.release();
+
+                                                                res.status(500).json({
+                                                                    success: false,
+                                                                    message:
+                                                                        "Failed to commit inventory changes",
+                                                                    error:
+                                                                        commitError.message
+                                                                });
+
+                                                            }
+                                                        );
+                                                    }
+
+                                                    connection.release();
+
+                                                    res.json({
+
                                                         success:
-                                                            false,
+                                                            true,
 
                                                         message:
-                                                            "Failed to check inventory",
+                                                            "Inventory deducted successfully",
 
-                                                        error:
-                                                            inventoryError.message
-                                                    });
-
-                                                }
-                                            );
-
-                                        }
-
-                                        if (
-                                            rows.length === 0
-                                        ) {
-
-                                            return db.rollback(
-                                                () => {
-
-                                                    res.status(400).json({
-
-                                                        success:
-                                                            false,
-
-                                                        message:
-                                                            `Inventory item not found: ${ingredient.name}`
+                                                        updatedItems:
+                                                            updatedItems
 
                                                     });
 
                                                 }
                                             );
-
                                         }
 
-                                        const inventory =
-                                            rows[0];
+                                        const ingredient =
+                                            ingredients[index];
 
-                                        const required =
-                                            Number(
-                                                ingredient.total_quantity
-                                            );
+                                        const inventoryQuery = `
+                                            SELECT
+                                                id,
+                                                item_name,
+                                                quantity,
+                                                unit
+                                            FROM inventory
+                                            WHERE LOWER(
+                                                TRIM(item_name)
+                                            ) =
+                                            LOWER(
+                                                TRIM(?)
+                                            )
+                                            LIMIT 1
+                                            FOR UPDATE
+                                        `;
 
-                                        const available =
-                                            Number(
-                                                inventory.quantity
-                                            );
-
-                                        if (
-                                            inventory.unit
-                                                .trim()
-                                                .toLowerCase() !==
-                                            ingredient.unit
-                                                .trim()
-                                                .toLowerCase()
-                                        ) {
-
-                                            return db.rollback(
-                                                () => {
-
-                                                    res.status(400).json({
-
-                                                        success:
-                                                            false,
-
-                                                        message:
-                                                            `Unit mismatch for ${ingredient.name}`,
-
-                                                        inventoryUnit:
-                                                            inventory.unit,
-
-                                                        requiredUnit:
-                                                            ingredient.unit
-
-                                                    });
-
-                                                }
-                                            );
-
-                                        }
-
-                                        if (
-                                            available <
-                                            required
-                                        ) {
-
-                                            return db.rollback(
-                                                () => {
-
-                                                    res.status(400).json({
-
-                                                        success:
-                                                            false,
-
-                                                        message:
-                                                            `Insufficient stock for ${ingredient.name}`,
-
-                                                        required:
-                                                            required,
-
-                                                        available:
-                                                            available,
-
-                                                        unit:
-                                                            inventory.unit
-
-                                                    });
-
-                                                }
-                                            );
-
-                                        }
-
-                                        const newQuantity =
-                                            available -
-                                            required;
-
-                                        db.query(
-                                            `
-                                            UPDATE inventory
-                                            SET quantity = ?
-                                            WHERE id = ?
-                                            `,
-                                            [
-                                                newQuantity,
-                                                inventory.id
-                                            ],
-                                            updateError => {
+                                        connection.query(
+                                            inventoryQuery,
+                                            [ingredient.name],
+                                            (
+                                                inventoryError,
+                                                rows
+                                            ) => {
 
                                                 if (
-                                                    updateError
+                                                    inventoryError
                                                 ) {
 
-                                                    return db.rollback(
+                                                    return connection.rollback(
                                                         () => {
+
+                                                            connection.release();
 
                                                             res.status(500).json({
                                                                 success:
                                                                     false,
 
                                                                 message:
-                                                                    "Failed to update inventory",
+                                                                    "Failed to check inventory",
 
                                                                 error:
-                                                                    updateError.message
+                                                                    inventoryError.message
                                                             });
 
                                                         }
                                                     );
-
                                                 }
 
-                                                updatedItems.push({
+                                                if (
+                                                    rows.length === 0
+                                                ) {
 
-                                                    itemName:
-                                                        inventory.item_name,
+                                                    return connection.rollback(
+                                                        () => {
 
-                                                    before:
-                                                        available,
+                                                            connection.release();
 
-                                                    deducted:
-                                                        required,
+                                                            res.status(400).json({
 
-                                                    after:
+                                                                success:
+                                                                    false,
+
+                                                                message:
+                                                                    `Inventory item not found: ${ingredient.name}`
+
+                                                            });
+
+                                                        }
+                                                    );
+                                                }
+
+                                                const inventory =
+                                                    rows[0];
+
+                                                const required =
+                                                    Number(
+                                                        ingredient.total_quantity
+                                                    );
+
+                                                const available =
+                                                    Number(
+                                                        inventory.quantity
+                                                    );
+
+                                                // UNIT CHECK
+
+                                                if (
+                                                    inventory.unit
+                                                        .trim()
+                                                        .toLowerCase() !==
+                                                    ingredient.unit
+                                                        .trim()
+                                                        .toLowerCase()
+                                                ) {
+
+                                                    return connection.rollback(
+                                                        () => {
+
+                                                            connection.release();
+
+                                                            res.status(400).json({
+
+                                                                success:
+                                                                    false,
+
+                                                                message:
+                                                                    `Unit mismatch for ${ingredient.name}`,
+
+                                                                inventoryUnit:
+                                                                    inventory.unit,
+
+                                                                requiredUnit:
+                                                                    ingredient.unit
+
+                                                            });
+
+                                                        }
+                                                    );
+                                                }
+
+                                                // STOCK CHECK
+
+                                                if (
+                                                    available <
+                                                    required
+                                                ) {
+
+                                                    return connection.rollback(
+                                                        () => {
+
+                                                            connection.release();
+
+                                                            res.status(400).json({
+
+                                                                success:
+                                                                    false,
+
+                                                                message:
+                                                                    `Insufficient stock for ${ingredient.name}`,
+
+                                                                required:
+                                                                    required,
+
+                                                                available:
+                                                                    available,
+
+                                                                unit:
+                                                                    inventory.unit
+
+                                                            });
+
+                                                        }
+                                                    );
+                                                }
+
+                                                const newQuantity =
+                                                    available -
+                                                    required;
+
+                                                connection.query(
+                                                    `
+                                                    UPDATE inventory
+                                                    SET quantity = ?
+                                                    WHERE id = ?
+                                                    `,
+                                                    [
                                                         newQuantity,
+                                                        inventory.id
+                                                    ],
+                                                    updateError => {
 
-                                                    unit:
-                                                        inventory.unit
+                                                        if (
+                                                            updateError
+                                                        ) {
 
-                                                });
+                                                            return connection.rollback(
+                                                                () => {
 
-                                                processIngredient(
-                                                    index + 1
+                                                                    connection.release();
+
+                                                                    res.status(500).json({
+                                                                        success:
+                                                                            false,
+
+                                                                        message:
+                                                                            "Failed to update inventory",
+
+                                                                        error:
+                                                                            updateError.message
+                                                                    });
+
+                                                                }
+                                                            );
+                                                        }
+
+                                                        updatedItems.push({
+
+                                                            itemName:
+                                                                inventory.item_name,
+
+                                                            before:
+                                                                available,
+
+                                                            deducted:
+                                                                required,
+
+                                                            after:
+                                                                newQuantity,
+
+                                                            unit:
+                                                                inventory.unit
+
+                                                        });
+
+                                                        processIngredient(
+                                                            index + 1
+                                                        );
+
+                                                    }
                                                 );
 
                                             }
                                         );
 
-                                    }
-                                );
+                                    };
 
-                            };
+                                processIngredient(0);
 
-                        processIngredient(0);
+                            }
+                        );
 
                     }
                 );
@@ -2074,7 +2046,6 @@ app.get(
                         error:
                             error.message
                     });
-
                 }
 
                 res.json({
@@ -2153,7 +2124,6 @@ app.get(
                 WHERE DATE(ms.schedule_date) = CURDATE()
                 ORDER BY ms.meal_time ASC
             `
-
         };
 
         db.query(
@@ -2164,12 +2134,10 @@ app.get(
             ) => {
 
                 if (foodPlanError) {
-
                     return dashboardError(
                         res,
                         foodPlanError
                     );
-
                 }
 
                 db.query(
@@ -2180,12 +2148,10 @@ app.get(
                     ) => {
 
                         if (menuError) {
-
                             return dashboardError(
                                 res,
                                 menuError
                             );
-
                         }
 
                         db.query(
@@ -2196,12 +2162,10 @@ app.get(
                             ) => {
 
                                 if (inventoryError) {
-
                                     return dashboardError(
                                         res,
                                         inventoryError
                                     );
-
                                 }
 
                                 db.query(
@@ -2214,12 +2178,10 @@ app.get(
                                         if (
                                             lowStockError
                                         ) {
-
                                             return dashboardError(
                                                 res,
                                                 lowStockError
                                             );
-
                                         }
 
                                         db.query(
@@ -2232,12 +2194,10 @@ app.get(
                                                 if (
                                                     lowStockItemsError
                                                 ) {
-
                                                     return dashboardError(
                                                         res,
                                                         lowStockItemsError
                                                     );
-
                                                 }
 
                                                 db.query(
@@ -2250,12 +2210,10 @@ app.get(
                                                         if (
                                                             todayScheduleError
                                                         ) {
-
                                                             return dashboardError(
                                                                 res,
                                                                 todayScheduleError
                                                             );
-
                                                         }
 
                                                         res.json({
@@ -2335,7 +2293,6 @@ function dashboardError(
             error.message
 
     });
-
 }
 
 
@@ -2387,7 +2344,6 @@ const server = app.listen(
 
     }
 );
-
 
 server.on(
     "error",
