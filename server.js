@@ -2271,26 +2271,79 @@ app.get(
 // DASHBOARD ERROR
 // =====================================================
 
-// =====================================================
-// DASHBOARD ERROR
-// =====================================================
-
 function dashboardError(res, error) {
 
     console.error(
-        "Dashboard error:",
+        "DASHBOARD DATABASE ERROR:",
         error
     );
 
     return res.status(500).json({
         success: false,
         message: "Failed to load dashboard",
-        error: error?.message || "Unknown database error",
-        code: error?.code || null,
-        errno: error?.errno || null,
-        sqlState: error?.sqlState || null
+
+        error:
+            error?.message ||
+            String(error) ||
+            "Unknown database error",
+
+        code:
+            error?.code ?? null,
+
+        errno:
+            error?.errno ?? null,
+
+        sqlState:
+            error?.sqlState ?? null,
+
+        sqlMessage:
+            error?.sqlMessage ?? null
     });
 }
+app.get("/api/db-test", (req, res) => {
+
+    db.query(
+        "SELECT 1 AS test",
+        (error, rows) => {
+
+            if (error) {
+
+                console.error(
+                    "DB TEST ERROR:",
+                    error
+                );
+
+                return res.status(500).json({
+                    success: false,
+                    message: "Database connection test failed",
+
+                    error:
+                        error?.message ||
+                        String(error) ||
+                        "Unknown database error",
+
+                    code:
+                        error?.code ?? null,
+
+                    errno:
+                        error?.errno ?? null,
+
+                    sqlState:
+                        error?.sqlState ?? null,
+
+                    sqlMessage:
+                        error?.sqlMessage ?? null
+                });
+            }
+
+            res.json({
+                success: true,
+                message: "Database connection is working",
+                rows: rows
+            });
+        }
+    );
+});
 // =====================================================
 // 404 HANDLER
 // =====================================================
