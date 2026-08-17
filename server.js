@@ -20,9 +20,7 @@ app.use(express.json());
 // =====================================================
 
 app.get("/", (req, res) => {
-
     res.send("Smart Food Planner Backend is Running");
-
 });
 
 
@@ -31,12 +29,10 @@ app.get("/", (req, res) => {
 // =====================================================
 
 app.get("/api/message", (req, res) => {
-
     res.json({
         success: true,
         message: "Backend connected successfully!"
     });
-
 });
 
 
@@ -68,7 +64,6 @@ app.get("/api/menus", (req, res) => {
                 message: "Failed to get menus",
                 error: error.message
             });
-
         }
 
         res.json({
@@ -76,9 +71,7 @@ app.get("/api/menus", (req, res) => {
             count: menus.length,
             menus: menus
         });
-
     });
-
 });
 
 
@@ -94,7 +87,6 @@ app.post("/api/menus", (req, res) => {
             success: false,
             message: "name and meal are required"
         });
-
     }
 
     const query = `
@@ -109,33 +101,29 @@ app.post("/api/menus", (req, res) => {
 
             if (error) {
 
-                console.error("Create menu error:", error.message);
+                console.error(
+                    "Create menu error:",
+                    error.message
+                );
 
                 return res.status(500).json({
                     success: false,
                     message: "Failed to create menu",
                     error: error.message
                 });
-
             }
 
             res.status(201).json({
-
                 success: true,
-
                 message: "Menu created successfully",
-
                 menu: {
                     id: result.insertId,
                     name: name,
                     meal: meal
                 }
-
             });
-
         }
     );
-
 });
 
 
@@ -151,7 +139,6 @@ app.get("/api/menus/:id", (req, res) => {
             success: false,
             message: "Invalid menu ID"
         });
-
     }
 
     const menuQuery = `
@@ -175,7 +162,6 @@ app.get("/api/menus/:id", (req, res) => {
                     message: "Failed to get menu",
                     error: menuError.message
                 });
-
             }
 
             if (menuResults.length === 0) {
@@ -184,7 +170,6 @@ app.get("/api/menus/:id", (req, res) => {
                     success: false,
                     message: "Menu not found"
                 });
-
             }
 
             const ingredientQuery = `
@@ -211,24 +196,19 @@ app.get("/api/menus/:id", (req, res) => {
                             message: "Failed to get ingredients",
                             error: ingredientError.message
                         });
-
                     }
 
                     res.json({
-
                         success: true,
-
                         menu: {
-
                             id: menuResults[0].id,
-
                             name: menuResults[0].name,
-
                             meal: menuResults[0].meal,
 
                             ingredients:
                                 ingredients.map(
                                     ingredient => ({
+                                        id: ingredient.id,
                                         name: ingredient.name,
                                         quantityPerPerson:
                                             Number(
@@ -237,17 +217,12 @@ app.get("/api/menus/:id", (req, res) => {
                                         unit: ingredient.unit
                                     })
                                 )
-
                         }
-
                     });
-
                 }
             );
-
         }
     );
-
 });
 
 
@@ -265,7 +240,6 @@ app.put("/api/menus/:id", (req, res) => {
             success: false,
             message: "Invalid menu ID"
         });
-
     }
 
     if (!name || !meal) {
@@ -274,7 +248,6 @@ app.put("/api/menus/:id", (req, res) => {
             success: false,
             message: "name and meal are required"
         });
-
     }
 
     const query = `
@@ -295,7 +268,6 @@ app.put("/api/menus/:id", (req, res) => {
                     message: "Failed to update menu",
                     error: error.message
                 });
-
             }
 
             if (result.affectedRows === 0) {
@@ -304,17 +276,14 @@ app.put("/api/menus/:id", (req, res) => {
                     success: false,
                     message: "Menu not found"
                 });
-
             }
 
             res.json({
                 success: true,
                 message: "Menu updated successfully"
             });
-
         }
     );
-
 });
 
 
@@ -330,7 +299,6 @@ app.delete("/api/menus/:id", (req, res) => {
             success: false,
             message: "Invalid menu ID"
         });
-
     }
 
     db.query(
@@ -345,7 +313,6 @@ app.delete("/api/menus/:id", (req, res) => {
                     message: "Failed to delete menu",
                     error: error.message
                 });
-
             }
 
             if (result.affectedRows === 0) {
@@ -354,17 +321,14 @@ app.delete("/api/menus/:id", (req, res) => {
                     success: false,
                     message: "Menu not found"
                 });
-
             }
 
             res.json({
                 success: true,
                 message: "Menu deleted successfully"
             });
-
         }
     );
-
 });
 
 
@@ -405,7 +369,6 @@ app.get("/api/inventory", (req, res) => {
                     message: "Failed to get inventory",
                     error: error.message
                 });
-
             }
 
             res.json({
@@ -413,10 +376,8 @@ app.get("/api/inventory", (req, res) => {
                 count: inventory.length,
                 inventory: inventory
             });
-
         }
     );
-
 });
 
 
@@ -443,7 +404,6 @@ app.post("/api/inventory", (req, res) => {
             message:
                 "itemName, quantity, unit and minimumStock are required"
         });
-
     }
 
     const query = `
@@ -475,24 +435,17 @@ app.post("/api/inventory", (req, res) => {
                         "Failed to create inventory item",
                     error: error.message
                 });
-
             }
 
             res.status(201).json({
-
                 success: true,
-
                 message:
                     "Inventory item created successfully",
-
                 inventoryId:
                     result.insertId
-
             });
-
         }
     );
-
 });
 
 
@@ -515,7 +468,6 @@ app.put("/api/inventory/:id", (req, res) => {
             success: false,
             message: "Invalid inventory ID"
         });
-
     }
 
     const query = `
@@ -547,7 +499,6 @@ app.put("/api/inventory/:id", (req, res) => {
                         "Failed to update inventory item",
                     error: error.message
                 });
-
             }
 
             if (result.affectedRows === 0) {
@@ -557,7 +508,6 @@ app.put("/api/inventory/:id", (req, res) => {
                     message:
                         "Inventory item not found"
                 });
-
             }
 
             res.json({
@@ -565,10 +515,8 @@ app.put("/api/inventory/:id", (req, res) => {
                 message:
                     "Inventory item updated successfully"
             });
-
         }
     );
-
 });
 
 
@@ -584,7 +532,6 @@ app.delete("/api/inventory/:id", (req, res) => {
             success: false,
             message: "Invalid inventory ID"
         });
-
     }
 
     db.query(
@@ -600,7 +547,6 @@ app.delete("/api/inventory/:id", (req, res) => {
                         "Failed to delete inventory item",
                     error: error.message
                 });
-
             }
 
             if (result.affectedRows === 0) {
@@ -610,7 +556,6 @@ app.delete("/api/inventory/:id", (req, res) => {
                     message:
                         "Inventory item not found"
                 });
-
             }
 
             res.json({
@@ -618,10 +563,8 @@ app.delete("/api/inventory/:id", (req, res) => {
                 message:
                     "Inventory item deleted successfully"
             });
-
         }
     );
-
 });
 
 
@@ -663,7 +606,6 @@ app.get("/api/meal-schedules", (req, res) => {
                         "Failed to get meal schedules",
                     error: error.message
                 });
-
             }
 
             res.json({
@@ -671,10 +613,8 @@ app.get("/api/meal-schedules", (req, res) => {
                 count: schedules.length,
                 schedules: schedules
             });
-
         }
     );
-
 });
 
 
@@ -704,7 +644,6 @@ app.post("/api/meal-schedules", (req, res) => {
             message:
                 "scheduleDate, mealType, mealTime, menuId and people are required"
         });
-
     }
 
     const query = `
@@ -740,24 +679,17 @@ app.post("/api/meal-schedules", (req, res) => {
                         "Failed to create meal schedule",
                     error: error.message
                 });
-
             }
 
             res.status(201).json({
-
                 success: true,
-
                 message:
                     "Meal schedule created successfully",
-
                 scheduleId:
                     result.insertId
-
             });
-
         }
     );
-
 });
 
 
@@ -782,7 +714,6 @@ app.put("/api/meal-schedules/:id", (req, res) => {
             success: false,
             message: "Invalid schedule ID"
         });
-
     }
 
     const query = `
@@ -818,7 +749,6 @@ app.put("/api/meal-schedules/:id", (req, res) => {
                         "Failed to update meal schedule",
                     error: error.message
                 });
-
             }
 
             if (result.affectedRows === 0) {
@@ -828,7 +758,6 @@ app.put("/api/meal-schedules/:id", (req, res) => {
                     message:
                         "Meal schedule not found"
                 });
-
             }
 
             res.json({
@@ -836,67 +765,57 @@ app.put("/api/meal-schedules/:id", (req, res) => {
                 message:
                     "Meal schedule updated successfully"
             });
-
         }
     );
-
 });
 
 
 // DELETE MEAL SCHEDULE
 
-app.delete(
-    "/api/meal-schedules/:id",
-    (req, res) => {
+app.delete("/api/meal-schedules/:id", (req, res) => {
 
-        const id = Number(req.params.id);
+    const id = Number(req.params.id);
 
-        if (!Number.isInteger(id)) {
+    if (!Number.isInteger(id)) {
 
-            return res.status(400).json({
-                success: false,
-                message: "Invalid schedule ID"
-            });
-
-        }
-
-        db.query(
-            "DELETE FROM meal_schedules WHERE id = ?",
-            [id],
-            (error, result) => {
-
-                if (error) {
-
-                    return res.status(500).json({
-                        success: false,
-                        message:
-                            "Failed to delete meal schedule",
-                        error: error.message
-                    });
-
-                }
-
-                if (result.affectedRows === 0) {
-
-                    return res.status(404).json({
-                        success: false,
-                        message:
-                            "Meal schedule not found"
-                    });
-
-                }
-
-                res.json({
-                    success: true,
-                    message:
-                        "Meal schedule deleted successfully"
-                });
-
-            }
-        );
-
+        return res.status(400).json({
+            success: false,
+            message: "Invalid schedule ID"
+        });
     }
-);
+
+    db.query(
+        "DELETE FROM meal_schedules WHERE id = ?",
+        [id],
+        (error, result) => {
+
+            if (error) {
+
+                return res.status(500).json({
+                    success: false,
+                    message:
+                        "Failed to delete meal schedule",
+                    error: error.message
+                });
+            }
+
+            if (result.affectedRows === 0) {
+
+                return res.status(404).json({
+                    success: false,
+                    message:
+                        "Meal schedule not found"
+                });
+            }
+
+            res.json({
+                success: true,
+                message:
+                    "Meal schedule deleted successfully"
+            });
+        }
+    );
+});
 
 
 // UPDATE SCHEDULE STATUS
@@ -905,35 +824,31 @@ app.patch(
     "/api/meal-schedules/:id/status",
     (req, res) => {
 
-        const id =
-            Number(req.params.id);
+        const id = Number(req.params.id);
 
-        const { status } =
-            req.body;
+        const { status } = req.body;
 
         const validStatuses = [
             "Planned",
             "Cooking",
+            "Preparing",
             "Completed",
             "Cancelled"
         ];
 
-        if (
-            !validStatuses.includes(status)
-        ) {
+        if (!validStatuses.includes(status)) {
 
             return res.status(400).json({
                 success: false,
                 message: "Invalid status"
             });
-
         }
 
         db.query(
             `
-            UPDATE meal_schedules
-            SET status = ?
-            WHERE id = ?
+                UPDATE meal_schedules
+                SET status = ?
+                WHERE id = ?
             `,
             [status, id],
             (error, result) => {
@@ -946,36 +861,25 @@ app.patch(
                             "Failed to update status",
                         error: error.message
                     });
-
                 }
 
-                if (
-                    result.affectedRows === 0
-                ) {
+                if (result.affectedRows === 0) {
 
                     return res.status(404).json({
                         success: false,
                         message:
                             "Meal schedule not found"
                     });
-
                 }
 
                 res.json({
-
                     success: true,
-
                     message:
                         "Schedule status updated successfully",
-
-                    status:
-                        status
-
+                    status: status
                 });
-
             }
         );
-
     }
 );
 
@@ -996,10 +900,8 @@ app.post("/api/calculator", (req, res) => {
 
         return res.status(400).json({
             success: false,
-            message:
-                "menu_id is required"
+            message: "menu_id is required"
         });
-
     }
 
     if (
@@ -1012,7 +914,6 @@ app.post("/api/calculator", (req, res) => {
             message:
                 "people must be greater than 0"
         });
-
     }
 
     if (
@@ -1025,7 +926,6 @@ app.post("/api/calculator", (req, res) => {
             message:
                 "safety_buffer must be between 0 and 100"
         });
-
     }
 
     const numberOfPeople =
@@ -1040,15 +940,14 @@ app.post("/api/calculator", (req, res) => {
             (1 + buffer / 100)
         );
 
-
     db.query(
         `
-        SELECT
-            id,
-            name,
-            meal
-        FROM menus
-        WHERE id = ?
+            SELECT
+                id,
+                name,
+                meal
+            FROM menus
+            WHERE id = ?
         `,
         [Number(menu_id)],
         (menuError, menuResults) => {
@@ -1062,36 +961,31 @@ app.post("/api/calculator", (req, res) => {
                     error:
                         menuError.message
                 });
-
             }
 
-            if (
-                menuResults.length === 0
-            ) {
+            if (menuResults.length === 0) {
 
                 return res.status(404).json({
                     success: false,
                     message:
                         "Menu not found"
                 });
-
             }
 
             const menu =
                 menuResults[0];
 
-
             db.query(
                 `
-                SELECT
-                    id,
-                    menu_id,
-                    name,
-                    quantity_per_person,
-                    unit
-                FROM ingredients
-                WHERE menu_id = ?
-                ORDER BY id
+                    SELECT
+                        id,
+                        menu_id,
+                        name,
+                        quantity_per_person,
+                        unit
+                    FROM ingredients
+                    WHERE menu_id = ?
+                    ORDER BY id
                 `,
                 [Number(menu_id)],
                 (ingredientError, ingredients) => {
@@ -1105,21 +999,16 @@ app.post("/api/calculator", (req, res) => {
                             error:
                                 ingredientError.message
                         });
-
                     }
 
-                    if (
-                        ingredients.length === 0
-                    ) {
+                    if (ingredients.length === 0) {
 
                         return res.status(404).json({
                             success: false,
                             message:
                                 "No ingredients found for this menu"
                         });
-
                     }
-
 
                     const calculatedIngredients =
                         ingredients.map(
@@ -1152,12 +1041,9 @@ app.post("/api/calculator", (req, res) => {
                                         Number(
                                             totalQuantity.toFixed(3)
                                         )
-
                                 };
-
                             }
                         );
-
 
                     res.json({
 
@@ -1166,8 +1052,7 @@ app.post("/api/calculator", (req, res) => {
                         message:
                             "Food calculated successfully",
 
-                        menu:
-                            menu,
+                        menu: menu,
 
                         people:
                             numberOfPeople,
@@ -1180,15 +1065,258 @@ app.post("/api/calculator", (req, res) => {
 
                         ingredients:
                             calculatedIngredients
-
                     });
+                }
+            );
+        }
+    );
+});
+
+
+// =====================================================
+// SAVE FOOD PLAN
+// =====================================================
+
+app.post("/api/food-plans", (req, res) => {
+
+    const {
+        plan_date,
+        people,
+        meal,
+        menu,
+        menu_id,
+        safety_buffer = 0,
+        ingredients
+    } = req.body;
+
+    if (
+        !plan_date ||
+        !people ||
+        !meal ||
+        !menu ||
+        !menu_id ||
+        !ingredients ||
+        !Array.isArray(ingredients) ||
+        ingredients.length === 0
+    ) {
+
+        return res.status(400).json({
+            success: false,
+            message:
+                "plan_date, people, meal, menu, menu_id and ingredients are required"
+        });
+    }
+
+    const numberOfPeople =
+        Number(people);
+
+    const buffer =
+        Number(safety_buffer);
+
+    if (
+        numberOfPeople <= 0
+    ) {
+
+        return res.status(400).json({
+            success: false,
+            message:
+                "people must be greater than 0"
+        });
+    }
+
+    if (
+        buffer < 0 ||
+        buffer > 100
+    ) {
+
+        return res.status(400).json({
+            success: false,
+            message:
+                "safety_buffer must be between 0 and 100"
+        });
+    }
+
+    const effectivePeople =
+        Math.ceil(
+            numberOfPeople *
+            (1 + buffer / 100)
+        );
+
+
+    // Start transaction
+
+    db.beginTransaction(
+        transactionError => {
+
+            if (transactionError) {
+
+                return res.status(500).json({
+                    success: false,
+                    message:
+                        "Failed to start transaction",
+                    error:
+                        transactionError.message
+                });
+            }
+
+
+            // Insert food plan
+
+            const foodPlanQuery = `
+                INSERT INTO food_plans
+                (
+                    plan_date,
+                    people,
+                    meal,
+                    menu,
+                    safety_buffer,
+                    effective_people
+                )
+                VALUES (?, ?, ?, ?, ?, ?)
+            `;
+
+            db.query(
+                foodPlanQuery,
+                [
+                    plan_date,
+                    numberOfPeople,
+                    meal,
+                    menu,
+                    buffer,
+                    effectivePeople
+                ],
+                (foodPlanError, foodPlanResult) => {
+
+                    if (foodPlanError) {
+
+                        return db.rollback(() => {
+
+                            res.status(500).json({
+                                success: false,
+                                message:
+                                    "Failed to save food plan",
+                                error:
+                                    foodPlanError.message
+                            });
+
+                        });
+                    }
+
+                    const foodPlanId =
+                        foodPlanResult.insertId;
+
+
+                    // Insert ingredients
+
+                    const ingredientQuery = `
+                        INSERT INTO food_plan_ingredients
+                        (
+                            food_plan_id,
+                            name,
+                            total_quantity,
+                            unit
+                        )
+                        VALUES ?
+                    `;
+
+
+                    const ingredientValues =
+                        ingredients.map(
+                            ingredient => [
+
+                                foodPlanId,
+
+                                ingredient.name,
+
+                                Number(
+                                    ingredient.totalQuantity
+                                ),
+
+                                ingredient.unit
+
+                            ]
+                        );
+
+
+                    db.query(
+                        ingredientQuery,
+                        [ingredientValues],
+                        (ingredientError) => {
+
+                            if (ingredientError) {
+
+                                return db.rollback(() => {
+
+                                    res.status(500).json({
+                                        success: false,
+                                        message:
+                                            "Failed to save food plan ingredients",
+                                        error:
+                                            ingredientError.message
+                                    });
+
+                                });
+                            }
+
+
+                            // Commit
+
+                            db.commit(
+                                commitError => {
+
+                                    if (commitError) {
+
+                                        return db.rollback(
+                                            () => {
+
+                                                res.status(500).json({
+                                                    success: false,
+                                                    message:
+                                                        "Failed to save food plan",
+                                                    error:
+                                                        commitError.message
+                                                });
+
+                                            }
+                                        );
+                                    }
+
+
+                                    res.status(201).json({
+
+                                        success: true,
+
+                                        message:
+                                            "Food plan saved successfully",
+
+                                        foodPlanId:
+                                            foodPlanId,
+
+                                        people:
+                                            numberOfPeople,
+
+                                        safety_buffer:
+                                            buffer,
+
+                                        effective_people:
+                                            effectivePeople,
+
+                                        ingredients:
+                                            ingredients
+
+                                    });
+
+                                }
+                            );
+
+                        }
+                    );
 
                 }
             );
 
         }
     );
-
 });
 
 
@@ -1224,24 +1352,142 @@ app.get("/api/food-plans", (req, res) => {
                     error:
                         error.message
                 });
-
             }
 
             res.json({
-
                 success: true,
-
                 count:
                     plans.length,
-
                 plans:
                     plans
-
             });
+        }
+    );
+});
+
+
+// =====================================================
+// GET FOOD PLAN BY ID
+// =====================================================
+
+app.get("/api/food-plans/:id", (req, res) => {
+
+    const foodPlanId =
+        Number(req.params.id);
+
+    if (
+        !Number.isInteger(foodPlanId) ||
+        foodPlanId <= 0
+    ) {
+
+        return res.status(400).json({
+            success: false,
+            message:
+                "Invalid food plan ID"
+        });
+    }
+
+    const planQuery = `
+        SELECT
+            id,
+            plan_date,
+            people,
+            meal,
+            menu,
+            safety_buffer,
+            effective_people
+        FROM food_plans
+        WHERE id = ?
+    `;
+
+    db.query(
+        planQuery,
+        [foodPlanId],
+        (planError, plans) => {
+
+            if (planError) {
+
+                return res.status(500).json({
+                    success: false,
+                    message:
+                        "Failed to get food plan",
+                    error:
+                        planError.message
+                });
+            }
+
+            if (plans.length === 0) {
+
+                return res.status(404).json({
+                    success: false,
+                    message:
+                        "Food plan not found"
+                });
+            }
+
+            const ingredientQuery = `
+                SELECT
+                    id,
+                    food_plan_id,
+                    name,
+                    total_quantity,
+                    unit
+                FROM food_plan_ingredients
+                WHERE food_plan_id = ?
+                ORDER BY id
+            `;
+
+            db.query(
+                ingredientQuery,
+                [foodPlanId],
+                (ingredientError, ingredients) => {
+
+                    if (ingredientError) {
+
+                        return res.status(500).json({
+                            success: false,
+                            message:
+                                "Failed to get food plan ingredients",
+                            error:
+                                ingredientError.message
+                        });
+                    }
+
+                    res.json({
+
+                        success: true,
+
+                        foodPlan: {
+
+                            ...plans[0],
+
+                            ingredients:
+                                ingredients.map(
+                                    ingredient => ({
+                                        id:
+                                            ingredient.id,
+
+                                        name:
+                                            ingredient.name,
+
+                                        totalQuantity:
+                                            Number(
+                                                ingredient.total_quantity
+                                            ),
+
+                                        unit:
+                                            ingredient.unit
+                                    })
+                                )
+                        }
+
+                    });
+
+                }
+            );
 
         }
     );
-
 });
 
 
@@ -1266,9 +1512,7 @@ app.post(
                 message:
                     "Invalid food plan ID"
             });
-
         }
-
 
         const ingredientQuery = `
             SELECT
@@ -1293,19 +1537,15 @@ app.post(
                         error:
                             ingredientError.message
                     });
-
                 }
 
-                if (
-                    ingredients.length === 0
-                ) {
+                if (ingredients.length === 0) {
 
                     return res.status(404).json({
                         success: false,
                         message:
                             "No ingredients found"
                     });
-
                 }
 
 
@@ -1321,7 +1561,6 @@ app.post(
                                 error:
                                     transactionError.message
                             });
-
                         }
 
 
@@ -1336,7 +1575,7 @@ app.post(
                                     ingredients.length
                                 ) {
 
-                                    db.commit(
+                                    return db.commit(
                                         commitError => {
 
                                             if (
@@ -1356,9 +1595,7 @@ app.post(
 
                                                     }
                                                 );
-
                                             }
-
 
                                             res.json({
 
@@ -1374,9 +1611,6 @@ app.post(
 
                                         }
                                     );
-
-                                    return;
-
                                 }
 
 
@@ -1428,7 +1662,6 @@ app.post(
 
                                                 }
                                             );
-
                                         }
 
 
@@ -1450,7 +1683,6 @@ app.post(
 
                                                 }
                                             );
-
                                         }
 
 
@@ -1469,6 +1701,8 @@ app.post(
                                                 inventory.quantity
                                             );
 
+
+                                        // Unit check
 
                                         if (
                                             inventory.unit
@@ -1499,9 +1733,10 @@ app.post(
 
                                                 }
                                             );
-
                                         }
 
+
+                                        // Stock check
 
                                         if (
                                             available <
@@ -1531,7 +1766,6 @@ app.post(
 
                                                 }
                                             );
-
                                         }
 
 
@@ -1542,11 +1776,9 @@ app.post(
 
                                         db.query(
                                             `
-                                            UPDATE inventory
-
-                                            SET quantity = ?
-
-                                            WHERE id = ?
+                                                UPDATE inventory
+                                                SET quantity = ?
+                                                WHERE id = ?
                                             `,
                                             [
                                                 newQuantity,
@@ -1562,20 +1794,15 @@ app.post(
                                                         () => {
 
                                                             res.status(500).json({
-
                                                                 success: false,
-
                                                                 message:
                                                                     "Failed to update inventory",
-
                                                                 error:
                                                                     updateError.message
-
                                                             });
 
                                                         }
                                                     );
-
                                                 }
 
 
@@ -1642,25 +1869,21 @@ app.get(
                 ms.people,
                 ms.status,
                 m.name AS menu_name
-
             FROM meal_schedules ms
-
             LEFT JOIN menus m
                 ON ms.menu_id = m.id
-
             WHERE ms.schedule_date =
                 CURDATE()
-
             ORDER BY
                 FIELD(
                     ms.meal_type,
                     'Breakfast',
                     'Lunch',
+                    'Snacks',
                     'Dinner'
                 ),
                 ms.meal_time ASC
         `;
-
 
         db.query(
             query,
@@ -1669,30 +1892,20 @@ app.get(
                 if (error) {
 
                     return res.status(500).json({
-
                         success: false,
-
                         message:
                             "Failed to get today's schedules",
-
                         error:
                             error.message
-
                     });
-
                 }
 
-
                 res.json({
-
                     success: true,
-
                     count:
                         schedules.length,
-
                     schedules:
                         schedules
-
                 });
 
             }
@@ -1758,7 +1971,6 @@ app.get("/api/dashboard", (req, res) => {
             WHERE DATE(ms.schedule_date) = CURDATE()
             ORDER BY ms.meal_time ASC
         `
-
     };
 
 
@@ -1826,6 +2038,7 @@ app.get("/api/dashboard", (req, res) => {
                                             if (
                                                 lowStockItemsError
                                             ) {
+
                                                 return dashboardError(
                                                     res,
                                                     lowStockItemsError
@@ -1843,6 +2056,7 @@ app.get("/api/dashboard", (req, res) => {
                                                     if (
                                                         todayScheduleError
                                                     ) {
+
                                                         return dashboardError(
                                                             res,
                                                             todayScheduleError
@@ -1899,6 +2113,10 @@ app.get("/api/dashboard", (req, res) => {
 });
 
 
+// =====================================================
+// DASHBOARD ERROR
+// =====================================================
+
 function dashboardError(
     res,
     error
@@ -1920,7 +2138,6 @@ function dashboardError(
             error.message
 
     });
-
 }
 
 

@@ -1,77 +1,434 @@
--- =========================================
--- CREATE DATABASE
--- =========================================
+-- ============================================================
+-- SMART FOOD PLANNER
+-- DATABASE FOR REACT + NODE.JS APPLICATION
+-- ============================================================
 
+-- Create database
 CREATE DATABASE IF NOT EXISTS smart_food_planner;
 
+-- Select database
 USE smart_food_planner;
 
 
--- =========================================
--- MENUS TABLE
--- =========================================
+-- ============================================================
+-- REMOVE OLD TABLES
+-- ============================================================
 
-CREATE TABLE IF NOT EXISTS menus (
-    id INT PRIMARY KEY AUTO_INCREMENT,
+DROP TABLE IF EXISTS food_plan_ingredients;
+DROP TABLE IF EXISTS food_plans;
+DROP TABLE IF EXISTS meal_schedules;
+DROP TABLE IF EXISTS ingredients;
+DROP TABLE IF EXISTS inventory;
+DROP TABLE IF EXISTS menus;
+
+
+-- ============================================================
+-- 1. MENUS
+-- Used by:
+-- Dashboard
+-- Menus
+-- Food Calculator
+-- Meal Schedule
+-- ============================================================
+
+CREATE TABLE menus (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+
     name VARCHAR(100) NOT NULL,
-    meal VARCHAR(50) NOT NULL
+
+    meal VARCHAR(50) NOT NULL,
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 
--- =========================================
--- INGREDIENTS TABLE
--- =========================================
+-- ============================================================
+-- 2. INGREDIENTS
+-- Each menu can have multiple ingredients
+-- ============================================================
 
-CREATE TABLE IF NOT EXISTS ingredients (
-    id INT PRIMARY KEY AUTO_INCREMENT,
+CREATE TABLE ingredients (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+
     menu_id INT NOT NULL,
-    name VARCHAR(100) NOT NULL,
-    quantity_per_person DECIMAL(10,2) NOT NULL,
-    unit VARCHAR(20) NOT NULL,
 
-    CONSTRAINT fk_ingredients_menu
-        FOREIGN KEY (menu_id)
+    name VARCHAR(100) NOT NULL,
+
+    quantity_per_person DECIMAL(10,3) NOT NULL,
+
+    unit VARCHAR(30) NOT NULL,
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (menu_id)
         REFERENCES menus(id)
         ON DELETE CASCADE
+        ON UPDATE CASCADE
 );
 
 
--- =========================================
--- FOOD PLANS TABLE
--- =========================================
+-- ============================================================
+-- 3. INVENTORY
+-- Used by:
+-- Inventory page
+-- Dashboard low-stock section
+-- Food plan inventory deduction
+-- ============================================================
 
-CREATE TABLE IF NOT EXISTS food_plans (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    plan_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+CREATE TABLE inventory (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+
+    item_name VARCHAR(100) NOT NULL,
+
+    quantity DECIMAL(10,3) NOT NULL DEFAULT 0,
+
+    unit VARCHAR(30) NOT NULL,
+
+    minimum_stock DECIMAL(10,3) NOT NULL DEFAULT 0,
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP
+);
+
+
+-- ============================================================
+-- 4. MEAL SCHEDULES
+-- Used by:
+-- Meal Schedule page
+-- Dashboard
+-- Today's Kitchen
+-- ============================================================
+
+CREATE TABLE meal_schedules (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+
+    schedule_date DATE NOT NULL,
+
+    meal_type VARCHAR(30) NOT NULL,
+
+    meal_time TIME NOT NULL,
+
+    menu_id INT NOT NULL,
+
     people INT NOT NULL,
-    meal VARCHAR(50) NOT NULL,
-    menu VARCHAR(100) NOT NULL,
-    safety_buffer DECIMAL(5,2) DEFAULT 0,
-    effective_people INT NOT NULL
+
+    status VARCHAR(30) NOT NULL DEFAULT 'Planned',
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (menu_id)
+        REFERENCES menus(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
 );
 
 
--- =========================================
--- FOOD PLAN INGREDIENTS TABLE
--- =========================================
+-- ============================================================
+-- 5. FOOD PLANS
+-- Used by:
+-- Food Calculator
+-- Dashboard
+-- Food Plan History
+-- ============================================================
 
-CREATE TABLE IF NOT EXISTS food_plan_ingredients (
-    id INT PRIMARY KEY AUTO_INCREMENT,
+CREATE TABLE food_plans (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+
+    plan_date DATE NOT NULL,
+
+    people INT NOT NULL,
+
+    meal VARCHAR(50) NOT NULL,
+
+    menu VARCHAR(100) NOT NULL,
+
+    safety_buffer DECIMAL(5,2) NOT NULL DEFAULT 0,
+
+    effective_people INT NOT NULL,
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+-- ============================================================
+-- 6. FOOD PLAN INGREDIENTS
+-- Stores calculated ingredient quantities
+-- ============================================================
+
+CREATE TABLE food_plan_ingredients (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+
     food_plan_id INT NOT NULL,
-    name VARCHAR(100) NOT NULL,
-    quantity_per_person DECIMAL(10,2) NOT NULL,
-    unit VARCHAR(20) NOT NULL,
-    total_quantity DECIMAL(10,2) NOT NULL,
 
-    CONSTRAINT fk_food_plan_ingredients_plan
-        FOREIGN KEY (food_plan_id)
+    name VARCHAR(100) NOT NULL,
+
+    total_quantity DECIMAL(10,3) NOT NULL,
+
+    unit VARCHAR(30) NOT NULL,
+
+    FOREIGN KEY (food_plan_id)
         REFERENCES food_plans(id)
         ON DELETE CASCADE
+        ON UPDATE CASCADE
 );
 
 
--- =========================================
--- CHECK TABLES
--- =========================================
+-- ============================================================
+-- SAMPLE MENU DATA
+-- ============================================================
+
+INSERT INTO menus (name, meal)
+VALUES
+('Chicken Biryani', 'Lunch'),
+('Vegetable Biryani', 'Lunch'),
+('Idly Sambar', 'Breakfast'),
+('Dosa', 'Breakfast'),
+('Chicken Curry Rice', 'Dinner'),
+('Paneer Butter Masala', 'Dinner');
+
+
+-- ============================================================
+-- SAMPLE INGREDIENT DATA
+-- ============================================================
+
+-- Chicken Biryani
+INSERT INTO ingredients
+(menu_id, name, quantity_per_person, unit)
+VALUES
+(1, 'Rice', 0.200, 'kg'),
+(1, 'Chicken', 0.250, 'kg'),
+(1, 'Onion', 0.100, 'kg'),
+(1, 'Tomato', 0.080, 'kg'),
+(1, 'Oil', 0.030, 'liter'),
+(1, 'Biryani Masala', 0.010, 'kg');
+
+
+-- Vegetable Biryani
+INSERT INTO ingredients
+(menu_id, name, quantity_per_person, unit)
+VALUES
+(2, 'Rice', 0.200, 'kg'),
+(2, 'Carrot', 0.050, 'kg'),
+(2, 'Beans', 0.040, 'kg'),
+(2, 'Peas', 0.030, 'kg'),
+(2, 'Onion', 0.080, 'kg'),
+(2, 'Oil', 0.030, 'liter');
+
+
+-- Idly Sambar
+INSERT INTO ingredients
+(menu_id, name, quantity_per_person, unit)
+VALUES
+(3, 'Idly Rice', 0.120, 'kg'),
+(3, 'Urad Dal', 0.040, 'kg'),
+(3, 'Toor Dal', 0.050, 'kg'),
+(3, 'Onion', 0.030, 'kg'),
+(3, 'Tomato', 0.040, 'kg');
+
+
+-- Dosa
+INSERT INTO ingredients
+(menu_id, name, quantity_per_person, unit)
+VALUES
+(4, 'Dosa Rice', 0.120, 'kg'),
+(4, 'Urad Dal', 0.040, 'kg'),
+(4, 'Oil', 0.020, 'liter');
+
+
+-- Chicken Curry Rice
+INSERT INTO ingredients
+(menu_id, name, quantity_per_person, unit)
+VALUES
+(5, 'Rice', 0.200, 'kg'),
+(5, 'Chicken', 0.250, 'kg'),
+(5, 'Onion', 0.100, 'kg'),
+(5, 'Tomato', 0.080, 'kg'),
+(5, 'Oil', 0.030, 'liter');
+
+
+-- Paneer Butter Masala
+INSERT INTO ingredients
+(menu_id, name, quantity_per_person, unit)
+VALUES
+(6, 'Paneer', 0.150, 'kg'),
+(6, 'Tomato', 0.100, 'kg'),
+(6, 'Onion', 0.080, 'kg'),
+(6, 'Butter', 0.030, 'kg'),
+(6, 'Cream', 0.030, 'liter');
+
+
+-- ============================================================
+-- SAMPLE INVENTORY DATA
+-- ============================================================
+
+INSERT INTO inventory
+(item_name, quantity, unit, minimum_stock)
+VALUES
+('Rice', 50.000, 'kg', 10.000),
+('Chicken', 20.000, 'kg', 5.000),
+('Onion', 15.000, 'kg', 5.000),
+('Tomato', 12.000, 'kg', 4.000),
+('Oil', 10.000, 'liter', 3.000),
+('Biryani Masala', 2.000, 'kg', 0.500),
+('Carrot', 8.000, 'kg', 2.000),
+('Beans', 6.000, 'kg', 2.000),
+('Peas', 5.000, 'kg', 1.000),
+('Idly Rice', 20.000, 'kg', 5.000),
+('Urad Dal', 10.000, 'kg', 2.000),
+('Toor Dal', 10.000, 'kg', 2.000),
+('Dosa Rice', 20.000, 'kg', 5.000),
+('Paneer', 8.000, 'kg', 2.000),
+('Butter', 5.000, 'kg', 1.000),
+('Cream', 5.000, 'liter', 1.000);
+
+
+-- ============================================================
+-- SAMPLE MEAL SCHEDULE DATA
+-- ============================================================
+
+INSERT INTO meal_schedules
+(
+    schedule_date,
+    meal_type,
+    meal_time,
+    menu_id,
+    people,
+    status
+)
+VALUES
+(
+    CURDATE(),
+    'Breakfast',
+    '08:00:00',
+    3,
+    50,
+    'Planned'
+),
+(
+    CURDATE(),
+    'Lunch',
+    '13:00:00',
+    1,
+    50,
+    'Planned'
+),
+(
+    CURDATE(),
+    'Dinner',
+    '20:00:00',
+    5,
+    50,
+    'Planned'
+);
+
+
+-- ============================================================
+-- SAMPLE FOOD PLAN
+-- ============================================================
+
+INSERT INTO food_plans
+(
+    plan_date,
+    people,
+    meal,
+    menu,
+    safety_buffer,
+    effective_people
+)
+VALUES
+(
+    CURDATE(),
+    50,
+    'Lunch',
+    'Chicken Biryani',
+    10.00,
+    55
+);
+
+
+-- ============================================================
+-- SAMPLE FOOD PLAN INGREDIENTS
+-- ============================================================
+
+INSERT INTO food_plan_ingredients
+(
+    food_plan_id,
+    name,
+    total_quantity,
+    unit
+)
+VALUES
+(1, 'Rice', 11.000, 'kg'),
+(1, 'Chicken', 13.750, 'kg'),
+(1, 'Onion', 5.500, 'kg'),
+(1, 'Tomato', 4.400, 'kg'),
+(1, 'Oil', 1.650, 'liter'),
+(1, 'Biryani Masala', 0.550, 'kg');
+
+
+-- ============================================================
+-- CHECK DATABASE
+-- ============================================================
+
+USE smart_food_planner;
 
 SHOW TABLES;
+
+
+-- ============================================================
+-- CHECK MENUS
+-- ============================================================
+
+SELECT * FROM menus;
+
+
+-- ============================================================
+-- CHECK INGREDIENTS
+-- ============================================================
+
+SELECT * FROM ingredients;
+
+
+-- ============================================================
+-- CHECK INVENTORY
+-- ============================================================
+
+SELECT * FROM inventory;
+
+
+-- ============================================================
+-- CHECK MEAL SCHEDULES
+-- ============================================================
+
+SELECT * FROM meal_schedules;
+
+
+-- ============================================================
+-- CHECK FOOD PLANS
+-- ============================================================
+
+SELECT * FROM food_plans;
+
+
+-- ============================================================
+-- CHECK FOOD PLAN INGREDIENTS
+-- ============================================================
+
+SELECT * FROM food_plan_ingredients;
+
+
+-- ============================================================
+-- DASHBOARD TEST
+-- ============================================================
+
+SELECT
+    (SELECT COUNT(*) FROM food_plans) AS foodPlans,
+    (SELECT COUNT(*) FROM menus) AS menus,
+    (SELECT COUNT(*) FROM inventory) AS inventory,
+    (
+        SELECT COUNT(*)
+        FROM inventory
+        WHERE quantity <= minimum_stock
+    ) AS lowStock;
