@@ -27,7 +27,10 @@ pool.getConnection((error, connection) => {
         return;
     }
 
-    console.log("MySQL connected successfully");
+    console.log(
+        "MySQL connected successfully"
+    );
+
     console.log(
         "Database:",
         process.env.DB_NAME
