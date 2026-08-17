@@ -4,7 +4,7 @@ const db = require("./db");
 
 const app = express();
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 
 // =====================================================
@@ -2165,6 +2165,7 @@ app.use((req, res) => {
 
 const server = app.listen(
     PORT,
+    "0.0.0.0",
     () => {
 
         console.log(
@@ -2176,16 +2177,14 @@ const server = app.listen(
         );
 
         console.log(
-            `Server: http://localhost:${PORT}`
+            `Server running on port ${PORT}`
         );
 
         console.log(
             "================================="
         );
-
     }
 );
-
 
 server.on(
     "error",
